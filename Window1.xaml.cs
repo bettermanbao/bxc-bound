@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System.ComponentModel;
 
 namespace bxc_bound
 {
@@ -26,18 +27,40 @@ namespace bxc_bound
 	/// </summary>
 	public partial class Window1 : Window
 	{
+		string str_result;
+		string str_ip;
+		string str_email;
+		string str_bcode;
+		
 		public Window1()
 		{
 			InitializeComponent();
 		}
 		void button1_Click(object sender, RoutedEventArgs e)
 		{
+			this.button1.IsEnabled = false;
+			this.txb_ip.IsEnabled = false;
+			this.txb_email.IsEnabled = false;
+			this.txb_bcode.IsEnabled = false;
+			this.txb_result.Text = "";
+			
+			this.str_ip = this.txb_ip.Text;
+			this.str_email = this.txb_email.Text;
+			this.str_bcode = this.txb_bcode.Text;
+			
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.DoWork += new DoWorkEventHandler( bound_bcode );
+			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bound_bcode_RunWorkerCompleted);
+			bw.RunWorkerAsync();
+		}
+		
+		void bound_bcode(object sender, DoWorkEventArgs e)
+		{
 			try{
-				this.txb_result.Text = "";
-				WebRequest request = WebRequest.Create("http://" + this.txb_ip.Text + ":9017/bound");
+				WebRequest request = WebRequest.Create("http://" + this.str_ip + ":9017/bound");
 				request.Method = "POST";
 				
-				string postData = "{\"bcode\":\""  + this.txb_bcode.Text + "\",\"email\":\"" + this.txb_email.Text + "\"}";
+				string postData = "{\"bcode\":\""  + this.str_bcode + "\",\"email\":\"" + this.str_email + "\"}";
 				byte[] byteArray = Encoding.UTF8.GetBytes(postData);
 				
 				request.ContentType = "application/json";
@@ -53,7 +76,7 @@ namespace bxc_bound
 				{
 					StreamReader reader = new StreamReader(dataStream);
 					string responseFromServer = reader.ReadToEnd();
-					this.txb_result.Text = JsonHelper.FormatJson(responseFromServer);
+					this.str_result = JsonHelper.FormatJson(responseFromServer);
 				}
 
 				response.Close();
@@ -62,17 +85,26 @@ namespace bxc_bound
 			{
 				if( wex.Response != null )
 				{
-					this.txb_result.Text = JsonHelper.FormatJson(new StreamReader(wex.Response.GetResponseStream()).ReadToEnd());
+					this.str_result = JsonHelper.FormatJson(new StreamReader(wex.Response.GetResponseStream()).ReadToEnd());
 				}
 				else
 				{
-					this.txb_result.Text = wex.Message;
+					this.str_result = wex.Message;
 				}
 			}
 			catch(Exception ex)
 			{
-				this.txb_result.Text = ex.Message;
+				this.str_result = ex.Message;
 			}
+		}
+		
+		void bound_bcode_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			this.txb_result.Text = this.str_result;
+			this.button1.IsEnabled = true;
+			this.txb_ip.IsEnabled = true;
+			this.txb_email.IsEnabled = true;
+			this.txb_bcode.IsEnabled = true;
 		}
 	}
 	

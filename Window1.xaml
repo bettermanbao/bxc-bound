@@ -5,8 +5,8 @@
 	WindowStartupLocation="CenterScreen"
 	ResizeMode="CanResize"
 	Width="400"
-	Title="博纳云节点绑定 v0.0.1"
-	Icon="favicon2.ico">
+	Icon="favicon2.ico"
+	Title="博纳云节点绑定 v0.0.2">
 	<Grid>
 		<Label
 			RenderTransformOrigin="0.5,0.5"
