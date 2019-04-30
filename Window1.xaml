@@ -1,0 +1,348 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="bxc_bound.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Height="300" xmlns:Controls0="clr-namespace:System;assembly=mscorlib"
+	WindowStartupLocation="CenterScreen"
+	ResizeMode="CanResize"
+	Width="400"
+	Title="博纳云节点绑定 v0.0.1"
+	Icon="favicon2.ico">
+	<Grid>
+		<Label
+			RenderTransformOrigin="0.5,0.5"
+			x:Name="lab_ip"
+			HorizontalContentAlignment="Right"
+			VerticalContentAlignment="Center"
+			Height="32"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="8,8,0,0"
+			Grid.ColumnSpan="2"
+			Width="50"
+			Content="节点 ip:">
+			<Label.Resources>
+				<Style
+					TargetType="Label" xmlns:s="clr-namespace:System;assembly=mscorlib">
+					<Style.Resources>
+						<ResourceDictionary />
+					</Style.Resources>
+					<Setter
+						Property="TextElement.Foreground">
+						<Setter.Value>
+							<DynamicResource
+								ResourceKey="{x:Static SystemColors.ControlTextBrushKey}" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Panel.Background">
+						<Setter.Value>
+							<SolidColorBrush>#00FFFFFF</SolidColorBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.Padding">
+						<Setter.Value>
+							<Thickness>5,5,5,5</Thickness>
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.HorizontalContentAlignment">
+						<Setter.Value>
+							<x:Static
+								Member="HorizontalAlignment.Left" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.VerticalContentAlignment">
+						<Setter.Value>
+							<x:Static
+								Member="VerticalAlignment.Top" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.Template">
+						<Setter.Value>
+							<ControlTemplate
+								TargetType="Label">
+								<Border
+									BorderThickness="{TemplateBinding Border.BorderThickness}"
+									Padding="{TemplateBinding Control.Padding}"
+									BorderBrush="{TemplateBinding Border.BorderBrush}"
+									Background="{TemplateBinding Panel.Background}"
+									SnapsToDevicePixels="True">
+									<ContentPresenter
+										RecognizesAccessKey="True"
+										Content="{TemplateBinding ContentControl.Content}"
+										ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+										ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
+										HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+										VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+										SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger
+										Property="UIElement.IsEnabled">
+										<Setter
+											Property="TextElement.Foreground">
+											<Setter.Value>
+												<DynamicResource
+													ResourceKey="{x:Static SystemColors.GrayTextBrushKey}" />
+											</Setter.Value>
+										</Setter>
+										<Trigger.Value>
+											<s:Boolean>False</s:Boolean>
+										</Trigger.Value>
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</Label.Resources>
+		</Label>
+		<TextBox
+			x:Name="txb_ip"
+			AcceptsTab="True"
+			Height="20"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="66,14,23,0" />
+		<Label
+			RenderTransformOrigin="0.5,0.5"
+			x:Name="lab_email"
+			HorizontalContentAlignment="Right"
+			VerticalContentAlignment="Center"
+			Height="32"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="8,42,0,0"
+			Grid.ColumnSpan="2"
+			Width="50"
+			Content="邮箱:">
+			<Label.Resources>
+				<Style
+					TargetType="Label" xmlns:s="clr-namespace:System;assembly=mscorlib">
+					<Style.Resources>
+						<ResourceDictionary />
+					</Style.Resources>
+					<Setter
+						Property="TextElement.Foreground">
+						<Setter.Value>
+							<DynamicResource
+								ResourceKey="{x:Static SystemColors.ControlTextBrushKey}" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Panel.Background">
+						<Setter.Value>
+							<SolidColorBrush>#00FFFFFF</SolidColorBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.Padding">
+						<Setter.Value>
+							<Thickness>5,5,5,5</Thickness>
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.HorizontalContentAlignment">
+						<Setter.Value>
+							<x:Static
+								Member="HorizontalAlignment.Left" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.VerticalContentAlignment">
+						<Setter.Value>
+							<x:Static
+								Member="VerticalAlignment.Top" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.Template">
+						<Setter.Value>
+							<ControlTemplate
+								TargetType="Label">
+								<Border
+									BorderThickness="{TemplateBinding Border.BorderThickness}"
+									Padding="{TemplateBinding Control.Padding}"
+									BorderBrush="{TemplateBinding Border.BorderBrush}"
+									Background="{TemplateBinding Panel.Background}"
+									SnapsToDevicePixels="True">
+									<ContentPresenter
+										RecognizesAccessKey="True"
+										Content="{TemplateBinding ContentControl.Content}"
+										ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+										ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
+										HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+										VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+										SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger
+										Property="UIElement.IsEnabled">
+										<Setter
+											Property="TextElement.Foreground">
+											<Setter.Value>
+												<DynamicResource
+													ResourceKey="{x:Static SystemColors.GrayTextBrushKey}" />
+											</Setter.Value>
+										</Setter>
+										<Trigger.Value>
+											<s:Boolean>False</s:Boolean>
+										</Trigger.Value>
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</Label.Resources>
+		</Label>
+		<TextBox
+			x:Name="txb_email"
+			AcceptsTab="True"
+			Height="20"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="66,48,23,0" />
+		<Label
+			RenderTransformOrigin="0.5,0.5"
+			x:Name="lab_bcode"
+			HorizontalContentAlignment="Right"
+			VerticalContentAlignment="Center"
+			Height="32"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="8,76,0,0"
+			Grid.ColumnSpan="2"
+			Width="50"
+			Content="Bcode:">
+			<Label.Resources>
+				<Style
+					TargetType="Label" xmlns:s="clr-namespace:System;assembly=mscorlib">
+					<Style.Resources>
+						<ResourceDictionary />
+					</Style.Resources>
+					<Setter
+						Property="TextElement.Foreground">
+						<Setter.Value>
+							<DynamicResource
+								ResourceKey="{x:Static SystemColors.ControlTextBrushKey}" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Panel.Background">
+						<Setter.Value>
+							<SolidColorBrush>#00FFFFFF</SolidColorBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.Padding">
+						<Setter.Value>
+							<Thickness>5,5,5,5</Thickness>
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.HorizontalContentAlignment">
+						<Setter.Value>
+							<x:Static
+								Member="HorizontalAlignment.Left" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.VerticalContentAlignment">
+						<Setter.Value>
+							<x:Static
+								Member="VerticalAlignment.Top" />
+						</Setter.Value>
+					</Setter>
+					<Setter
+						Property="Control.Template">
+						<Setter.Value>
+							<ControlTemplate
+								TargetType="Label">
+								<Border
+									BorderThickness="{TemplateBinding Border.BorderThickness}"
+									Padding="{TemplateBinding Control.Padding}"
+									BorderBrush="{TemplateBinding Border.BorderBrush}"
+									Background="{TemplateBinding Panel.Background}"
+									SnapsToDevicePixels="True">
+									<ContentPresenter
+										RecognizesAccessKey="True"
+										Content="{TemplateBinding ContentControl.Content}"
+										ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+										ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
+										HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+										VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+										SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger
+										Property="UIElement.IsEnabled">
+										<Setter
+											Property="TextElement.Foreground">
+											<Setter.Value>
+												<DynamicResource
+													ResourceKey="{x:Static SystemColors.GrayTextBrushKey}" />
+											</Setter.Value>
+										</Setter>
+										<Trigger.Value>
+											<s:Boolean>False</s:Boolean>
+										</Trigger.Value>
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</Label.Resources>
+		</Label>
+		<TextBox
+			x:Name="txb_bcode"
+			AcceptsTab="True"
+			Height="20"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="66,82,23,0"
+			Text="" />
+		<Button
+			Width="75"
+			Height="23"
+			Content="绑定"
+			x:Name="button1"
+			Click="button1_Click"
+			IsDefault="True"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Top"
+			Margin="0,115,0,0" />
+		<TextBox
+			IsReadOnly="True"
+			x:Name="txb_result"
+			VerticalScrollBarVisibility="Auto"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			HorizontalScrollBarVisibility="Auto"
+			Margin="23,150,23,23" />
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition
+				Width="0.458620689655172*" />
+		</Grid.ColumnDefinitions>
+	</Grid>
+</Window>
