@@ -10,7 +10,7 @@
     <AssemblyName>bxc-bound</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <ApplicationIcon>favicon2.ico</ApplicationIcon>
+    <ApplicationIcon>bxc.ico</ApplicationIcon>
     <NoWin32Manifest>False</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
@@ -83,7 +83,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="favicon2.ico" />
+    <Resource Include="bxc.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
