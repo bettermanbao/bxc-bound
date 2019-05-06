@@ -1,8 +1,8 @@
 ﻿/*
  * Created by SharpDevelop.
  * User: allen
- * Date: 2019/4/29
- * Time: 8:30
+ * Date: 2019/5/5
+ * Time: 22:40
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
@@ -15,10 +15,13 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.IO;
 using System.Net;
-using System.Linq;
+using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 
 namespace bxc_bound
 {
@@ -27,40 +30,163 @@ namespace bxc_bound
 	/// </summary>
 	public partial class Window1 : Window
 	{
-		string str_result;
-		string str_ip;
+		List<BXCNode> bxcnodelist = new List<BXCNode>();
+		string localip;
 		string str_email;
 		string str_bcode;
+		string str_result;
+		string[] lst_bcode;
+		win_startup startup;
 		
 		public Window1()
 		{
 			InitializeComponent();
+			lookupNetInterface();
 		}
-		void button1_Click(object sender, RoutedEventArgs e)
+		
+		void lookupNetInterface()
 		{
-			this.button1.IsEnabled = false;
-			this.txb_ip.IsEnabled = false;
-			this.txb_email.IsEnabled = false;
-			this.txb_bcode.IsEnabled = false;
-			this.txb_result.Text = "";
+			foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+			{
+				foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+				{
+					if(!ip.IsDnsEligible)
+						continue;
+
+					if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+					{
+						cbx_ip.Items.Add(ip.Address.ToString());
+					}
+				}
+			}
+			cbx_ip.SelectedIndex = this.cbx_ip.Items.Count - 1;
+		}
+
+		void btn_scanIP_Click(object sender, RoutedEventArgs e)
+		{
+			btn_scanIP.IsEnabled = false;
+			btn_scanIP.Content = "扫描中...";
+			btn_bound.IsEnabled = false;
+			lsb_ip.Items.Clear();
+			bxcnodelist.Clear();
 			
-			this.str_ip = this.txb_ip.Text;
-			this.str_email = this.txb_email.Text;
-			this.str_bcode = this.txb_bcode.Text;
+			startup = new win_startup();
+			startup.Show();
 			
+			localip = this.cbx_ip.Text;
 			BackgroundWorker bw = new BackgroundWorker();
-			bw.DoWork += new DoWorkEventHandler( bound_bcode );
-			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bound_bcode_RunWorkerCompleted);
+			bw.DoWork += new DoWorkEventHandler(bw_queryBXCNode);
+			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_queryBXCNode_RunWorkerCompleted);
 			bw.RunWorkerAsync();
 		}
 		
-		void bound_bcode(object sender, DoWorkEventArgs e)
+		void queryBXCNode(Object ip)
+		{
+			BXCNode bxcnode = new BXCNode((string)ip);
+			if(bxcnode.IsOK)
+			{
+				bxcnodelist.Add(bxcnode);
+			}
+		}
+		
+		void bw_queryBXCNode(object sender, DoWorkEventArgs e)
+		{
+			List<Task> queryTasks = new List<Task>();
+			
+			IPAddress address;
+			if(IPAddress.TryParse(this.localip, out address))
+			{
+				string ipA = localip.Split('.')[0];
+				string ipB = localip.Split('.')[1];
+				string ipC = localip.Split('.')[2];
+				for(int i=2; i<255; i++)
+				{
+					queryTasks.Add(Task.Factory.StartNew(queryBXCNode, ipA + "." + ipB + "." + ipC + "." + i));
+				}
+			}
+			Task.WaitAll(queryTasks.ToArray());
+		}
+		
+		void bw_queryBXCNode_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			foreach(BXCNode b in bxcnodelist)
+			{
+				ListBoxItem lbi_bxcnode = new ListBoxItem();
+				lbi_bxcnode.Content = b.ToString();
+				lbi_bxcnode.Foreground = b.ToBrush();
+				lsb_ip.Items.Add(lbi_bxcnode);
+			}
+			btn_bound.IsEnabled = true;
+			btn_scanIP.Content = "扫描节点";
+			btn_scanIP.IsEnabled = true;
+			startup.Close();
+		}
+		
+		void btn_bound_Click(object sender, RoutedEventArgs e)
+		{
+			btn_bound.IsEnabled = false;
+			btn_bound.Content = "绑定中...";
+			btn_scanIP.IsEnabled = false;
+			txb_email.IsEnabled = false;
+			txb_bcode.IsEnabled = false;
+			txb_result.Text = "";
+			str_result = "";
+			
+			str_email = txb_email.Text;
+			str_bcode = txb_bcode.Text;
+			
+			lst_bcode  = txb_bcode.Text.Split(new[] { System.Environment.NewLine }, StringSplitOptions.None);
+			
+			for(int i=0, j=0; i<lsb_ip.Items.Count && j<lst_bcode.Length; i++)
+			{
+				if(bxcnodelist[i].Status.status.bound)
+				{
+					continue;
+				}
+				
+				if(((ListBoxItem)lsb_ip.Items[i]).IsSelected)
+				{
+					bxcnodelist[i].IsSelected = true;
+					j++;
+				}
+			}
+			
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.WorkerReportsProgress = true;
+			bw.DoWork += new DoWorkEventHandler(bw_bound_bcode);
+			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_bound_bcode_RunWorkerCompleted);
+			bw.ProgressChanged += new ProgressChangedEventHandler(bw_bound_bcode_ProgressChanged);
+			bw.RunWorkerAsync();
+			
+		}
+		
+		void bw_bound_bcode(object sender, DoWorkEventArgs e)
 		{
 			try{
-				WebRequest request = WebRequest.Create("http://" + this.str_ip + ":9017/bound");
+				BackgroundWorker worker = sender as BackgroundWorker;
+				
+				for(int i=0, j=0; i<bxcnodelist.Count; i++)
+				{
+					if(bxcnodelist[i].IsSelected)
+					{
+						bound_bcode(i, bxcnodelist[i].Discovery.ip, str_email, lst_bcode[j++].Trim());
+						worker.ReportProgress(i);
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+			}
+		}
+		
+		void bound_bcode(int bxc_index, string ip, string email, string bcode)
+		{
+			try{
+				WebRequest request = WebRequest.Create("http://" + ip + ":9017/bound");
 				request.Method = "POST";
 				
-				string postData = "{\"bcode\":\""  + this.str_bcode + "\",\"email\":\"" + this.str_email + "\"}";
+				string postData = "{\"bcode\":\""  + bcode + "\",\"email\":\"" + email + "\"}";
 				byte[] byteArray = Encoding.UTF8.GetBytes(postData);
 				
 				request.ContentType = "application/json";
@@ -76,7 +202,8 @@ namespace bxc_bound
 				{
 					StreamReader reader = new StreamReader(dataStream);
 					string responseFromServer = reader.ReadToEnd();
-					this.str_result = JsonHelper.FormatJson(responseFromServer);
+					str_result = ip + " " + responseFromServer;
+					bxcnodelist[bxc_index].IsBoundOK = true;
 				}
 
 				response.Close();
@@ -85,27 +212,57 @@ namespace bxc_bound
 			{
 				if( wex.Response != null )
 				{
-					this.str_result = JsonHelper.FormatJson(new StreamReader(wex.Response.GetResponseStream()).ReadToEnd());
+					str_result = ip + " " + new StreamReader(wex.Response.GetResponseStream()).ReadToEnd();
 				}
 				else
 				{
-					this.str_result = wex.Message;
+					str_result = ip + " " + wex.Message;
 				}
+				bxcnodelist[bxc_index].IsBoundOK = false;
 			}
 			catch(Exception ex)
 			{
-				this.str_result = ex.Message;
+				str_result = ip + " " + ex.Message;
+				bxcnodelist[bxc_index].IsBoundOK = false;
 			}
 		}
 		
-		void bound_bcode_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		void bw_bound_bcode_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			this.txb_result.Text = this.str_result;
-			this.button1.IsEnabled = true;
-			this.txb_ip.IsEnabled = true;
-			this.txb_email.IsEnabled = true;
-			this.txb_bcode.IsEnabled = true;
+			for(int i=0; i<bxcnodelist.Count; i++)
+			{
+				if(bxcnodelist[i].IsSelected)
+				{
+					if(bxcnodelist[i].IsBoundOK)
+					{
+						((ListBoxItem)lsb_ip.Items[i]).Foreground = Brushes.Green;
+					}
+					else
+					{
+						((ListBoxItem)lsb_ip.Items[i]).Foreground = Brushes.Red;
+					}
+					bxcnodelist[i].IsSelected = false;
+				}
+			}
+			
+			lsb_ip.SelectedIndex = -1;
+			btn_scanIP.IsEnabled = true;
+			txb_email.IsEnabled = true;
+			txb_bcode.IsEnabled = true;
+			btn_bound.Content = "绑定";
+			btn_bound.IsEnabled = true;
 		}
+
+		void bw_bound_bcode_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			txb_result.Text += str_result + System.Environment.NewLine;
+			str_result = "";
+		}
+		void window1_Loaded(object sender, RoutedEventArgs e)
+		{
+			
+		}
+		
 	}
 	
 	static class JsonHelper

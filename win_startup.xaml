@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="bxc_bound.win_startup" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="bxc_bound"
+	WindowStyle="None"
+	ResizeMode="NoResize"
+	x:Name="window1"
+	VerticalAlignment="Top"
+	Height="600"
+	Width="1200"
+	ShowInTaskbar="False"
+	WindowStartupLocation="CenterScreen"
+	Topmost="True">
+	<Grid>
+		<Image
+			Grid.Column="0"
+			Grid.Row="0"
+			Margin="0,0,0,0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Source="startup.png"
+			Width="1200"
+			Height="600" />
+		<Label
+			HorizontalContentAlignment="Center"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Center"
+			Margin="0,0,0,0"
+			Content="正在努力扫描本地节点的ip，请耐心等待。。。"
+			FontWeight="Bold"
+			Foreground="White"
+			VerticalAlignment="Bottom"
+			VerticalContentAlignment="Center"
+			Height="120"
+			Width="1000"
+			FontSize="32" />
+	</Grid>
+</Window>
