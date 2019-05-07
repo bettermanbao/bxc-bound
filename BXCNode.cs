@@ -10,6 +10,7 @@ using System;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.Windows.Media;
+using System.Net.Sockets;
 
 namespace bxc_bound
 {
@@ -25,7 +26,7 @@ namespace bxc_bound
 		public bool IsSelected;
 		public bool IsBoundOK;
 		
-		public BXCNode(string ip)
+		public BXCNode(string ip, TimeSpan timeout)
 		{
 			this.IsOK = false;
 			this.IsSelected = false;
@@ -33,13 +34,16 @@ namespace bxc_bound
 			
 			try
 			{
-				MyWebClient wc = new MyWebClient();
-				this.Discovery = new JavaScriptSerializer().Deserialize<api_discovery>(wc.DownloadString("http://" + ip + ":9017/discovery"));
-				this.Status = new JavaScriptSerializer().Deserialize<api_status>(wc.DownloadString("http://" + ip + ":9017/status"));
-				this.Version = new JavaScriptSerializer().Deserialize<api_version>(wc.DownloadString("http://" + ip + ":9017/version"));
-				if(this.Discovery.cksum == "BonusCloud")
+				if(BXCNode.IsPortOpen(ip, 9017, timeout))
 				{
-					this.IsOK = true;
+					WebClient wc = new WebClient();
+					this.Discovery = new JavaScriptSerializer().Deserialize<api_discovery>(wc.DownloadString("http://" + ip + ":9017/discovery"));
+					this.Status = new JavaScriptSerializer().Deserialize<api_status>(wc.DownloadString("http://" + ip + ":9017/status"));
+					this.Version = new JavaScriptSerializer().Deserialize<api_version>(wc.DownloadString("http://" + ip + ":9017/version"));
+					if(this.Discovery.cksum == "BonusCloud")
+					{
+						this.IsOK = true;
+					}
 				}
 			}
 			catch
@@ -68,7 +72,12 @@ namespace bxc_bound
 		
 		public override string ToString()
 		{
-			return this.Discovery.ip + System.Environment.NewLine + this.Discovery.mac + "            " + this.Version.version ;
+			string process = "";
+			if(this.Status.status.bound && !this.Status.status.process)
+			{
+				process = "            节点离线";
+			}
+			return this.Discovery.ip + process + System.Environment.NewLine + this.Discovery.mac + "            " + this.Version.version ;
 		}
 		
 		public class api_discovery
@@ -94,14 +103,28 @@ namespace bxc_bound
 			public string version { get; set; }
 		}
 		
-		private class MyWebClient : WebClient
+		static bool IsPortOpen(string host, int port, TimeSpan timeout)
 		{
-			protected override WebRequest GetWebRequest(Uri uri)
+			try
 			{
-				WebRequest w = base.GetWebRequest(uri);
-				w.Timeout = 100;
-				return w;
+				using(var client = new TcpClient())
+				{
+					var result = client.BeginConnect(host, port, null, null);
+					var success = result.AsyncWaitHandle.WaitOne(timeout);
+					if (!success)
+					{
+						return false;
+					}
+
+					client.EndConnect(result);
+				}
+
 			}
+			catch
+			{
+				return false;
+			}
+			return true;
 		}
 		
 	}

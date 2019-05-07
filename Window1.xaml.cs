@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace bxc_bound
 {
@@ -32,6 +33,7 @@ namespace bxc_bound
 	{
 		List<BXCNode> bxcnodelist = new List<BXCNode>();
 		string localip;
+		TimeSpan scan_timeout;
 		string str_email;
 		string str_bcode;
 		string str_result;
@@ -42,6 +44,13 @@ namespace bxc_bound
 		{
 			InitializeComponent();
 			lookupNetInterface();
+		}
+		
+		static readonly Regex _regex = new Regex("[^0-9]+");
+		
+		static bool IsTextAllowed(string text)
+		{
+			return !_regex.IsMatch(text);
 		}
 		
 		void lookupNetInterface()
@@ -74,6 +83,17 @@ namespace bxc_bound
 			startup.Show();
 			
 			localip = this.cbx_ip.Text;
+			int t;
+			try
+			{
+				t = Convert.ToInt32(this.txb_timeout.Text);
+			}
+			catch
+			{
+				this.txb_timeout.Text = "100";
+				t = 100;
+			}
+			scan_timeout = new TimeSpan(0,0,0,0,t);
 			BackgroundWorker bw = new BackgroundWorker();
 			bw.DoWork += new DoWorkEventHandler(bw_queryBXCNode);
 			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_queryBXCNode_RunWorkerCompleted);
@@ -82,7 +102,7 @@ namespace bxc_bound
 		
 		void queryBXCNode(Object ip)
 		{
-			BXCNode bxcnode = new BXCNode((string)ip);
+			BXCNode bxcnode = new BXCNode((string)ip, scan_timeout);
 			if(bxcnode.IsOK)
 			{
 				bxcnodelist.Add(bxcnode);
@@ -261,6 +281,10 @@ namespace bxc_bound
 		void window1_Loaded(object sender, RoutedEventArgs e)
 		{
 			
+		}
+		void txb_timeout_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			e.Handled = !IsTextAllowed(e.Text);
 		}
 		
 	}

@@ -111,11 +111,37 @@
 					Content="扫描节点"
 					Grid.Column="0"
 					Grid.Row="0"
-					HorizontalAlignment="Center"
 					VerticalAlignment="Top"
-					Margin="0,38,0,0"
 					Click="btn_scanIP_Click"
-					TabIndex="20" />
+					TabIndex="20"
+					HorizontalAlignment="Left"
+					Margin="18,38,0,0" />
+				<TextBox
+					Height="20"
+					Grid.Column="0"
+					Grid.Row="0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					Margin="0,38,18,0"
+					Width="35"
+					MaxLength="4"
+					IsTabStop="True"
+					TabIndex="25"
+					x:Name="txb_timeout"
+					Text="100"
+					HorizontalContentAlignment="Right"
+					VerticalContentAlignment="Center"
+					PreviewTextInput="txb_timeout_PreviewTextInput" />
+				<Label
+					HorizontalContentAlignment="Right"
+					Content="超时(毫秒):"
+					Grid.Column="0"
+					Grid.Row="0"
+					VerticalAlignment="Top"
+					Height="24"
+					Width="70"
+					HorizontalAlignment="Left"
+					Margin="105,35,0,8" />
 			</Grid>
 		</GroupBox>
 		<GroupBox
@@ -142,14 +168,15 @@
 					Margin="8,6,0,0"
 					Content="Email:" />
 				<TextBox
-					Height="21"
 					Grid.Column="0"
 					Grid.Row="0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Top"
 					Margin="80,8,8,0"
 					x:Name="txb_email"
-					TabIndex="30" />
+					TabIndex="30"
+					Height="20"
+					VerticalContentAlignment="Center" />
 				<Label
 					HorizontalContentAlignment="Right"
 					VerticalContentAlignment="Bottom"
