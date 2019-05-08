@@ -4,7 +4,7 @@
 	Height="480"
 	MinHeight="480"
 	Icon="bxc.ico"
-	Title="博纳云节点绑定 v0.0.3"
+	Title="博纳云节点绑定 v0.0.3.1"
 	Width="800"
 	WindowStartupLocation="CenterScreen"
 	x:Name="window1"

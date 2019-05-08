@@ -19,6 +19,7 @@ namespace bxc_bound
 	/// </summary>
 	public class BXCNode
 	{
+		public string api_ip;
 		public api_discovery Discovery;
 		public api_status Status;
 		public api_version Version;
@@ -28,6 +29,7 @@ namespace bxc_bound
 		
 		public BXCNode(string ip, TimeSpan timeout)
 		{
+			this.api_ip = ip;
 			this.IsOK = false;
 			this.IsSelected = false;
 			this.IsBoundOK = false;
@@ -75,9 +77,9 @@ namespace bxc_bound
 			string process = "";
 			if(this.Status.status.bound && !this.Status.status.process)
 			{
-				process = "            节点离线";
+				process = " [节点离线]";
 			}
-			return this.Discovery.ip + process + System.Environment.NewLine + this.Discovery.mac + "            " + this.Version.version ;
+			return this.api_ip + process + System.Environment.NewLine + this.Discovery.mac + " - " + this.Version.version ;
 		}
 		
 		public class api_discovery

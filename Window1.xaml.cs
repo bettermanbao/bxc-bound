@@ -189,7 +189,7 @@ namespace bxc_bound
 				{
 					if(bxcnodelist[i].IsSelected)
 					{
-						bound_bcode(i, bxcnodelist[i].Discovery.ip, str_email, lst_bcode[j++].Trim());
+						bound_bcode(i, bxcnodelist[i].api_ip, str_email, lst_bcode[j++].Trim());
 						worker.ReportProgress(i);
 					}
 				}
