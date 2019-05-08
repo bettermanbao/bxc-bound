@@ -17,7 +17,7 @@ namespace bxc_bound
 	/// <summary>
 	/// Description of BXCNode.
 	/// </summary>
-	public class BXCNode
+	public class BXCNode : IComparable<BXCNode>
 	{
 		public string api_ip;
 		public api_discovery Discovery;
@@ -74,12 +74,18 @@ namespace bxc_bound
 		
 		public override string ToString()
 		{
-			string process = "";
-			if(this.Status.status.bound && !this.Status.status.process)
-			{
-				process = " [节点离线]";
+			try{
+				string process = "";
+				if(this.Status.status.bound && !this.Status.status.process)
+				{
+					process = " [节点离线]";
+				}
+				return this.api_ip + process + System.Environment.NewLine + this.Discovery.mac + " - " + this.Version.version ;
 			}
-			return this.api_ip + process + System.Environment.NewLine + this.Discovery.mac + " - " + this.Version.version ;
+			catch
+			{
+				return this.api_ip + System.Environment.NewLine;
+			}
 		}
 		
 		public class api_discovery
@@ -129,5 +135,15 @@ namespace bxc_bound
 			return true;
 		}
 		
+		public int CompareTo(BXCNode other)
+		{
+			try{
+				return Convert.ToInt32(this.api_ip.Split('.')[3]).CompareTo(Convert.ToInt32(other.api_ip.Split('.')[3]));
+			}
+			catch
+			{
+				return 0;
+			}
+		}
 	}
 }

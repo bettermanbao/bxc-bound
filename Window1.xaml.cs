@@ -129,6 +129,7 @@ namespace bxc_bound
 		
 		void bw_queryBXCNode_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
+			bxcnodelist.Sort();
 			foreach(BXCNode b in bxcnodelist)
 			{
 				ListBoxItem lbi_bxcnode = new ListBoxItem();
